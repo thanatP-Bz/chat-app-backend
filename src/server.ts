@@ -1,14 +1,15 @@
 import express from "express";
 import { Request, Response } from "express";
-import { chats } from "../data/data.js";
 import cors from "cors";
 import dotenv from "dotenv";
+import userRoutes from "../routes/userRoutes";
 dotenv.config();
-import userRoute from "../routes/userController.js";
 
 const app = express();
 
 app.use(cors());
+app.use(express.json());
+app.use("/api/user", userRoutes);
 
 const PORT = process.env.process || 5000;
 

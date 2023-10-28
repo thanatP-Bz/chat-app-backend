@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import User from "../models/userModel.js";
+import User from "../models/userModel";
+import generateToken from "../config/generateToken";
 
 const register = async (req: Request, res: Response) => {
   const { name, email, password, pic } = req.body;
@@ -29,11 +30,13 @@ const register = async (req: Request, res: Response) => {
       name: user.name,
       email: user.email,
       pic: user.pic,
+      token: generateToken(user._id),
     });
   } else {
     res.status(400);
     throw new Error("Failed to create the User");
   }
+  res.send("register user");
 };
 
 export default register;
