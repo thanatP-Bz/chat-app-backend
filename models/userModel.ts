@@ -1,6 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
+import bcrypt from "bcrypt";
 
-const userModel = new mongoose.Schema(
+interface User extends Document {
+  name: string;
+  email: string;
+  password: string;
+  pic: string;
+  isAdmin: boolean;
+}
+
+const userModel = new mongoose.Schema<User>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -20,4 +29,17 @@ const userModel = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("user", userModel);
+userModel.methods.matchPassword = async function (enteredPassword: string) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userModel.pre("save", async function (next) {
+  if (!this.isModified) {
+    next();
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+export default mongoose.model<User>("user", userModel);
