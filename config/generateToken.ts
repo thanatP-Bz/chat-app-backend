@@ -1,12 +1,8 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
-dotenv.config();
-
-const secret: string = "secret";
 
 const generateToken = (id: mongoose.Types.ObjectId) => {
-  return jwt.sign({ id }, secret, {
+  return jwt.sign({ id }, process.env.SECRET as string, {
     expiresIn: "30d",
   });
 };
