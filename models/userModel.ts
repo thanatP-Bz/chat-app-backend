@@ -1,7 +1,7 @@
-import mongoose, { Document } from "mongoose";
+import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-interface User extends Document {
+interface User {
   name: string;
   email: string;
   password: string;
@@ -9,7 +9,11 @@ interface User extends Document {
   isAdmin: boolean;
 }
 
-const userModel = new mongoose.Schema<User>(
+interface IApplicationUserModel extends mongoose.Model<User, {}> {
+  matchPassword(enteredPassword: string): Promise<boolean>;
+}
+
+const userSchema = new mongoose.Schema<User, IApplicationUserModel>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -29,11 +33,17 @@ const userModel = new mongoose.Schema<User>(
   { timestamps: true }
 );
 
-userModel.methods.matchPassword = async function (enteredPassword: string) {
-  return await bcrypt.compare(enteredPassword, this.password);
+userSchema.methods.matchPassword = async function (
+  enteredPassword: string
+): Promise<boolean> {
+  try {
+    return await bcrypt.compare(enteredPassword, this.password);
+  } catch (error) {
+    throw new Error();
+  }
 };
 
-userModel.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified) {
     next();
   }
@@ -42,4 +52,4 @@ userModel.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-export default mongoose.model<User>("user", userModel);
+export default mongoose.model<User, IApplicationUserModel>("User", userSchema);
