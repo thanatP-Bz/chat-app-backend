@@ -5,7 +5,7 @@
   "main": "dirt/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon",
+    "server": "nodemon --ext ts --delay 100ms src/app.ts ",
     "start": "tsc && node dist/server.js"
   },
   "author": "",

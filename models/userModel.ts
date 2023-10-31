@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcrypt";
 
-interface User {
+interface IUserDocument {
   name: string;
   email: string;
   password: string;
@@ -9,11 +9,11 @@ interface User {
   isAdmin: boolean;
 }
 
-interface IApplicationUserModel extends mongoose.Model<User, {}> {
-  matchPassword(enteredPassword: string): Promise<boolean>;
+interface IUserMethods extends IUserDocument, Document {
+  matchPassword(password: string): Promise<boolean>;
 }
 
-const userSchema = new mongoose.Schema<User, IApplicationUserModel>(
+const UserSchema = new Schema<IUserDocument>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -33,17 +33,15 @@ const userSchema = new mongoose.Schema<User, IApplicationUserModel>(
   { timestamps: true }
 );
 
-userSchema.methods.matchPassword = async function (
+UserSchema.methods.matchPassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
-  try {
-    return await bcrypt.compare(enteredPassword, this.password);
-  } catch (error) {
-    throw new Error();
-  }
+  const user = this as IUserMethods;
+  const result = await bcrypt.compare(enteredPassword, user.password);
+  return result;
 };
 
-userSchema.pre("save", async function (next) {
+UserSchema.pre("save", async function (next) {
   if (!this.isModified) {
     next();
   }
@@ -52,4 +50,5 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-export default mongoose.model<User, IApplicationUserModel>("User", userSchema);
+const User = mongoose.model<IUserDocument>("User", UserSchema);
+export default User;

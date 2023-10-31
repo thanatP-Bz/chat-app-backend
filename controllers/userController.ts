@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import User from "../models/userModel";
 import generateToken from "../config/generateToken";
 
@@ -46,7 +46,9 @@ const authUser = async (req: Request, res: Response) => {
 
   const user = await User.findOne({ email });
 
-  if (user && (await User.matchPassword(password))) {
+  const checkUser = await User.matchPassword(password);
+
+  if (user && checkUser) {
     res.status(200).json({
       _id: user._id,
       name: user.name,
