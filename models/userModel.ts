@@ -13,7 +13,7 @@ interface IUserMethods extends IUserDocument, Document {
   matchPassword(password: string): Promise<boolean>;
 }
 
-const UserSchema = new Schema<IUserDocument>(
+const UserSchema = new Schema<IUserDocument, IUserMethods>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
