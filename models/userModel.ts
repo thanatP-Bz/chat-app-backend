@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import bcrypt from "bcrypt";
 
-interface IUserDocument {
+interface IUserDocument extends Document {
   name: string;
   email: string;
   password: string;
@@ -9,8 +9,8 @@ interface IUserDocument {
   isAdmin: boolean;
 }
 
-interface IUserMethods extends IUserDocument, Document {
-  matchPassword(password: string): Promise<boolean>;
+interface IUserMethods extends Model<IUserDocument> {
+  matchPassword: (password: string) => Promise<boolean>;
 }
 
 const UserSchema = new Schema<IUserDocument, IUserMethods>(
@@ -36,9 +36,11 @@ const UserSchema = new Schema<IUserDocument, IUserMethods>(
 UserSchema.methods.matchPassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
-  const user = this as IUserMethods;
-  const result = await bcrypt.compare(enteredPassword, user.password);
-  return result;
+  try {
+    return await bcrypt.compare(enteredPassword, this.password);
+  } catch (error) {
+    throw new Error("Comparison failed");
+  }
 };
 
 UserSchema.pre("save", async function (next) {
@@ -50,5 +52,8 @@ UserSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const User = mongoose.model<IUserDocument>("User", UserSchema);
-export default User;
+const User: IUserMethods = mongoose.model<IUserDocument, IUserMethods>(
+  "User",
+  UserSchema
+);
+export { User };
