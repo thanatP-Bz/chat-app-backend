@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { User } from "../models/userModel";
+import asyncHandler from "express-async-handler";
+import User from "../models/userModel";
 import generateToken from "../config/generateToken";
 
 /* register */
@@ -41,20 +42,26 @@ const register = async (req: Request, res: Response) => {
 };
 
 /* auth user */
-const authUser = async (req: Request, res: Response) => {
+const authUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
 
-  if (user && (await User.matchPassword(password))) {
-    res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      pic: user.pic,
-      token: generateToken(user._id),
-    });
+  try {
+    if (user) {
+      res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        pic: user.pic,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(500).json({ message: "something went wrong" });
+    }
+  } catch (error) {
+    res.json({ message: error });
   }
-};
+});
 
 export { register, authUser };
