@@ -47,12 +47,15 @@ const authUser = asyncHandler(async (req: Request, res: Response) => {
 
   const user = await User.findOne({ email });
 
+  const checkMatchPassword = await user?.matchPassword(password);
+
   try {
-    if (user) {
+    if (user && checkMatchPassword) {
       res.status(200).json({
         _id: user._id,
         name: user.name,
         email: user.email,
+        password: user.password,
         pic: user.pic,
         token: generateToken(user._id),
       });

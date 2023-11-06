@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 import bcrypt from "bcrypt";
 
-interface IUserDocument {
+interface IUserDocument extends Document {
   name: string;
   email: string;
   password: string;
@@ -10,7 +10,7 @@ interface IUserDocument {
   isAdmin: boolean;
 }
 
-interface IUserMethods {
+interface IUserMethods extends IUserDocument {
   matchPassword(password: string): Promise<boolean>;
 }
 
@@ -36,9 +36,8 @@ const UserSchema = new Schema<IUserDocument, UserModel, IUserMethods>(
   { timestamps: true }
 );
 
-UserSchema.methods.matchPassword = async function (
-  enteredPassword: string
-): Promise<boolean> {
+UserSchema.methods.matchPassword = async function (enteredPassword: string) {
+  console.log(this.password);
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
