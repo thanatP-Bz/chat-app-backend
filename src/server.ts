@@ -5,13 +5,20 @@ import dotenv from "dotenv";
 import userRoutes from "../routes/userRoutes";
 dotenv.config();
 import connectToDB from "../config/database";
+import { notFound, errorHandler } from "../middleware/errorHandler";
 
 const app = express();
 
+//connect to database
 connectToDB();
+
+//middleware
 app.use(cors());
 app.use(express.json());
 app.use("/api/user", userRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.process || 5000;
 
