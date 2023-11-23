@@ -3,6 +3,27 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel";
 import generateToken from "../config/generateToken";
 
+/* get all users */
+declare module "express" {
+  interface Request {
+    user?: any;
+  }
+}
+
+const getAllUsers = async (req: Request, res: Response) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+  res.send(users);
+};
+
 /* register */
 const register = async (req: Request, res: Response) => {
   const { name, email, password, pic } = req.body;
@@ -67,4 +88,4 @@ const authUser = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export { register, authUser };
+export { register, authUser, getAllUsers };
