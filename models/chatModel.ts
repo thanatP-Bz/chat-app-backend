@@ -1,4 +1,16 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
+
+interface IUserDocument extends Document {
+  chatname: string;
+  isGroupChat: boolean;
+  users: Types.ObjectId;
+  latestMessage: Types.ObjectId;
+  groupAdmin: Types.ObjectId;
+  timestamps: boolean;
+  _id?: Types.ObjectId;
+}
+
+type UserModel = mongoose.Model<IUserDocument, {}>;
 
 const ChatModel = new mongoose.Schema(
   {
@@ -24,4 +36,4 @@ const ChatModel = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("chat", ChatModel);
+export default mongoose.model<IUserDocument, UserModel>("Chat", ChatModel);

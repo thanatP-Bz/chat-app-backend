@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 const { Schema } = mongoose;
 import bcrypt from "bcrypt";
 
@@ -8,6 +8,13 @@ interface IUserDocument extends Document {
   password: string;
   pic: string;
   isAdmin: boolean;
+  _id: mongoose.Types.ObjectId;
+  chatname: string;
+  isGroupChat: boolean;
+  users: Types.ObjectId;
+  latestMessage: Types.ObjectId;
+  groupAdmin: Types.ObjectId;
+  timestamps: boolean;
 }
 
 interface IUserMethods extends IUserDocument {
