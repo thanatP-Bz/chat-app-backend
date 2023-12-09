@@ -13,30 +13,32 @@ declare module "express" {
 }
 
 const protect = async (req: Request, res: Response, next: NextFunction) => {
-  let token!: string;
+  let token: string | null = null;
 
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
+    req.headers.authorization.startsWith("Bearer ")
   ) {
-    try {
-      token = req.headers.authorization.split(" ")[1];
+    token = req.headers.authorization.split(" ")[1];
+    if (token) {
+      try {
+        //decodes token id
+        const decoded = jwt.verify(token, "SECRET") as JWTPayload;
 
-      //decodes token id
-      const decoded = jwt.verify(token, "SECRET") as JWTPayload;
+        req.user = await User.findById(decoded.id).select("-password");
 
-      req.user = await User.findById(decoded.id).select("-password");
-
-      next();
-    } catch (error) {
-      res.status(401);
-      throw new Error("Not authorized, token failed");
+        next();
+      } catch (error) {
+        console.error("Token verification error:", error);
+        res.status(401);
+        throw new Error("Not authorized, token failed");
+      }
     }
-  }
 
-  if (!token) {
-    res.status(401);
-    throw new Error("Not authorized, no token");
+    if (!token) {
+      res.status(401);
+      throw new Error("Not authorized, no token");
+    }
   }
 };
 

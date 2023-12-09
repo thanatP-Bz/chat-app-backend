@@ -9,7 +9,7 @@ interface IUserDocument extends Document {
   pic: string;
   isAdmin: boolean;
   _id: mongoose.Types.ObjectId;
-  chatname: string;
+  chatName: string;
   isGroupChat: boolean;
   users: Types.ObjectId;
   latestMessage: Types.ObjectId;

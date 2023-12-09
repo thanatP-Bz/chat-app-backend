@@ -1,7 +1,7 @@
 import mongoose, { Types } from "mongoose";
 
 interface IUserDocument extends Document {
-  chatname: string;
+  chatName: string;
   isGroupChat: boolean;
   users: Types.ObjectId;
   latestMessage: Types.ObjectId;
@@ -14,7 +14,7 @@ type UserModel = mongoose.Model<IUserDocument, {}>;
 
 const ChatModel = new mongoose.Schema(
   {
-    chatname: { type: String, trim: true },
+    chatName: { type: String, trim: true },
     isGroupChat: { type: Boolean, default: false },
     users: [
       {
