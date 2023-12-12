@@ -4,28 +4,18 @@ import User from "../models/userModel";
 import generateToken from "../config/generateToken";
 
 /* get all users */
-declare module "express" {
+/* declare module "express" {
   interface Request {
     user?: any;
   }
 }
-
+ */
 const getAllUsers = async (req: Request, res: Response) => {
-  const keyword = req.query.search
-    ? {
-        $or: [
-          { name: { $regex: req.query.search, $options: "i" } },
-          { email: { $regex: req.query.search, $options: "i" } },
-        ],
-      }
-    : {};
-
-  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
-  res.send(users);
+  console.log("get all user");
 };
 
-/* register */
-const register = async (req: Request, res: Response) => {
+/* signup */
+const singup = async (req: Request, res: Response) => {
   const { name, email, password, pic } = req.body;
 
   if (!name || !email || !password) {
@@ -59,7 +49,6 @@ const register = async (req: Request, res: Response) => {
     res.status(400);
     throw new Error("Failed to create the User");
   }
-  res.send("register user");
 };
 
 /* auth user */
@@ -88,4 +77,4 @@ const authUser = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export { register, authUser, getAllUsers };
+export { singup, authUser, getAllUsers };
