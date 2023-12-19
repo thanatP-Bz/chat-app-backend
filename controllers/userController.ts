@@ -4,14 +4,31 @@ import User from "../models/userModel";
 import generateToken from "../config/generateToken";
 
 /* get all users */
-/* declare module "express" {
+declare module "express" {
   interface Request {
     user?: any;
   }
 }
- */
+
 const getAllUsers = async (req: Request, res: Response) => {
-  console.log("get all user");
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  /* not currently log in */
+  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+
+  try {
+    res.status(200).send(users);
+  } catch (error: any) {
+    res.status(404);
+    throw new Error(error);
+  }
 };
 
 /* signup */
