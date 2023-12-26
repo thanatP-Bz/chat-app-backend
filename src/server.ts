@@ -4,10 +4,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "../routes/userRoutes";
 import chatRoutes from "../routes/chatRoutes";
-dotenv.config();
+import messageRoutes from "../routes/messageRoutes";
 import connectToDB from "../config/database";
 import { notFound, errorHandler } from "../middleware/errorHandler";
 
+dotenv.config();
 const app = express();
 
 //connect to database
@@ -20,6 +21,7 @@ app.use(express.json());
 //routes
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/message", messageRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

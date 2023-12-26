@@ -8,16 +8,17 @@ interface IUserDocument extends Document {
   password: string;
   pic: string;
   isAdmin: boolean;
-  _id: mongoose.Types.ObjectId;
+  _id: Types.ObjectId;
   chatName: string;
   isGroupChat: boolean;
-  users: Types.ObjectId;
+  users: Types.ObjectId[];
   latestMessage: Types.ObjectId;
   groupAdmin: Types.ObjectId;
   timestamps: boolean;
 }
 
 interface IUserMethods extends IUserDocument {
+  _id: Types.ObjectId;
   matchPassword(password: string): Promise<boolean>;
 }
 

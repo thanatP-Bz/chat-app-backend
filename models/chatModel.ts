@@ -1,6 +1,6 @@
-import mongoose, { Types } from "mongoose";
+import mongoose, { Types, Model } from "mongoose";
 
-interface IUserDocument extends Document {
+interface IChatDocument extends Document {
   chatName: string;
   isGroupChat: boolean;
   users: Types.ObjectId;
@@ -10,9 +10,9 @@ interface IUserDocument extends Document {
   _id?: Types.ObjectId;
 }
 
-type UserModel = mongoose.Model<IUserDocument, {}>;
+type ChatModel = Model<IChatDocument, {}>;
 
-const ChatModel = new mongoose.Schema(
+const ChatSchema = new mongoose.Schema<IChatDocument, ChatModel>(
   {
     chatName: { type: String, trim: true },
     isGroupChat: { type: Boolean, default: false },
@@ -36,4 +36,4 @@ const ChatModel = new mongoose.Schema(
   }
 );
 
-export default mongoose.model<IUserDocument, UserModel>("Chat", ChatModel);
+export default mongoose.model<IChatDocument, ChatModel>("Chat", ChatSchema);

@@ -1,6 +1,28 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
-const messageModel = new mongoose.Schema(
+interface IUserDocument extends Document {
+  name: string;
+  email: string;
+  password: string;
+  pic: string;
+  isAdmin: boolean;
+  _id: Types.ObjectId;
+  chatName: string;
+  isGroupChat: boolean;
+  users: Types.ObjectId;
+  latestMessage: Types.ObjectId;
+  groupAdmin: Types.ObjectId;
+  timestamps: boolean;
+}
+
+interface IMessageDocument extends Document {
+  _id: Types.ObjectId;
+  sender: Types.ObjectId | IUserDocument;
+  content: string;
+  chat: Types.ObjectId;
+}
+
+const MessageSchema = new mongoose.Schema<IMessageDocument>(
   {
     sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     content: { type: String, trim: true },
@@ -11,4 +33,4 @@ const messageModel = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("message", messageModel);
+export default mongoose.model<IMessageDocument>("Message", MessageSchema);

@@ -3,7 +3,6 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel";
 import generateToken from "../config/generateToken";
 
-/* get all users */
 declare module "express" {
   interface Request {
     user?: any;
