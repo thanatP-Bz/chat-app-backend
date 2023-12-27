@@ -3,7 +3,7 @@ import mongoose, { Types, Model } from "mongoose";
 interface IChatDocument extends Document {
   chatName: string;
   isGroupChat: boolean;
-  users: Types.ObjectId;
+  users: Types.ObjectId[];
   latestMessage: Types.ObjectId;
   groupAdmin: Types.ObjectId;
   timestamps: boolean;

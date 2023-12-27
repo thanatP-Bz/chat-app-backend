@@ -17,7 +17,7 @@ const allMessages = async (req: Request, res: Response) => {
     res.json(messages);
   } catch (error) {
     res.status(400);
-    throw new Error(error.message);
+    throw new Error((error as Error).message);
   }
 };
 
@@ -59,7 +59,7 @@ const sendMessage = async (req: Request, res: Response) => {
 
     res.json(message);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: (error as Error).message });
   }
 };
 
