@@ -7,6 +7,7 @@ import chatRoutes from "../routes/chatRoutes";
 import messageRoutes from "../routes/messageRoutes";
 import connectToDB from "../config/database";
 import { notFound, errorHandler } from "../middleware/errorHandler";
+import { Server, Socket } from "socket.io";
 
 dotenv.config();
 const app = express();
@@ -26,12 +27,30 @@ app.use("/api/message", messageRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.process || 5000;
+const PORT = process.env.PORT || 5000;
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Api is Running");
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`listening to the port ${PORT}`);
+});
+
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
+});
+
+io.on("connection", (socket: Socket) => {
+  console.log("connected to socket.io");
+});
+
+io.on("connection_error", (err: any) => {
+  console.error("Socket connection error:", err);
 });
